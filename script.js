@@ -16,8 +16,10 @@ digits.forEach((digit) => {
                 unselectButtons(buttons);
             };
         }));
-    
-        display.textContent += digit.textContent;
+        if (checkNumTooLong(display.textContent)) {  
+            display.textContent += digit.textContent;
+        };
+        
         //digit.classList.toggle('selected');
     });
 });
@@ -33,7 +35,7 @@ operations.forEach((operation) => {
     operation.addEventListener('click', () => {
         if (operator !== '' && equals.classList.length < 2) {
             num2 = display.textContent;
-            display.textContent = operate(operator, num1, num2);
+            display.textContent = operate(operator, num1, num2).toFixed(8);
         };
         // 
         if (decimalPoint.classList.length > 0) {
@@ -72,7 +74,9 @@ equals.addEventListener('click', () => {
     } else {
         num2 = display.textContent;
     };
-    display.textContent = operate(operator, num1, num2);
+    const result = operate(operator, num1, num2);
+    console.log(result);
+    display.textContent = roundResult(result);
     equals.classList.toggle('selected');
     //num2 = '';
 })
@@ -91,6 +95,21 @@ function operate(operator, num1, num2) {
           return divide(num1, num2)
         };
     
+};
+
+function checkNumTooLong(display) {
+    return display.length < 9
+};
+
+function roundResult(result) {
+    // There should be max 9 significant figures
+    console.log(result.toString().length);
+    if (result.toString().length > 9) {
+        
+      result = result.toPrecision(5);
+      
+    };
+    return result;
 };
 
 const decimalPoint = document.querySelector('#decimal');
