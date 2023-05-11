@@ -35,6 +35,8 @@ window.addEventListener('keydown', (function(e) {
 //Need to only be able to enter digits
     if ((e.key * 0) !== 0) return;
 
+    console.log(e.key);
+
     if (equals.classList.length > 1) {
         operator = '';
     };
@@ -75,6 +77,8 @@ operations.forEach((operation) => {
 // Enter operation if typed on keyboard
 window.addEventListener('keydown', (function(e) {
     if (e.key !== '/' && e.key !== '*' && e.key !== '-' && e.key !== '+') return;
+
+console.log(e.key);
 
     if (operator !== '' && equals.classList.length < 2) {
         num2 = display.textContent;
@@ -138,7 +142,10 @@ equals.addEventListener('click', () => {
 
 // Enter = if typed on keyboard
 window.addEventListener('keydown', function(e) {
-    if (e.key !== '=') return // && e.key !== 'Enter') return;
+    if (e.key !== '=' && e.key !== 'Enter') return;
+
+console.log(e.key);
+e.preventDefault();
 
     if (equals.classList.length > 1) {
         equals.classList.toggle('selected');
@@ -191,6 +198,9 @@ function roundResult(result) {
 decimalPoint.addEventListener('click', typeDecimal);
 window.addEventListener('keydown', function(e) {
     if (e.key !== '.') return;
+
+    console.log(e.key);
+
     typeDecimal();
 });
 
