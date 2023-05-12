@@ -58,19 +58,21 @@ window.addEventListener('keydown', (function(e) {
 
 operations.forEach((operation) => {
     operation.addEventListener('click', () => {
-        if (operator !== '' && equals.classList.length < 2) {
+        if (operator !== '' && equals.classList.length < 2 && display.classList.length < 1) {
             num2 = display.textContent;
             const result = operate(operator, num1, num2);
             console.log(`${num1} ${operator} ${num2} = ${result}`);
             display.textContent = roundResult(result) * 1;
         };
-        if (decimalPoint.classList.length > 0) {
-            decimalPoint.classList.toggle('used');
-        }
+        //if (decimalPoint.classList.length > 0) {
+          //  decimalPoint.classList.toggle('used');
+       // }
         unselectButtons(buttons);
         operator = operation.id;
+        display.classList.toggle('operation-selected');
         operation.classList.toggle('selected');
         num1 = display.textContent;
+        
     });
 });
 
@@ -80,7 +82,7 @@ window.addEventListener('keydown', (function(e) {
 
 console.log(e.key);
 
-    if (operator !== '' && equals.classList.length < 2) {
+    if (operator !== '' && equals.classList.length < 2 && display.classList.length < 1) {
         num2 = display.textContent;
         const result = operate(operator, num1, num2);
         console.log(`${num1} ${operator} ${num2} = ${result}`);
@@ -90,6 +92,7 @@ console.log(e.key);
         decimalPoint.classList.toggle('used');
     }
     unselectButtons(buttons);
+    display.classList.toggle('operation-selected');
     if (e.key === '/') {
         operator = 'division';
         operations[0].classList.toggle('selected');
@@ -108,6 +111,9 @@ console.log(e.key);
 
 
 function unselectButtons(buttons) {
+    if (display.classList.length > 0) {
+        display.classList.toggle('operation-selected');
+    };
     if (decimalPoint.classList.length > 0) {
         decimalPoint.classList.toggle('used');
     };
