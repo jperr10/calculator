@@ -33,60 +33,24 @@ function enterDigit(digit) {
     } else (buttons.forEach((button) => {
         if (button.classList.length > 1) {
             display.textContent = '';
-            unselectButtons(buttons);
         };
     }));
     if (checkNumTooLong(display.textContent)) { 
         display.textContent += digit;
     };
+    unselectButtons(buttons);
 };
 
 operations.forEach((operation) => {
-    operation.addEventListener('click', () => {
-        if (operator !== '' && equals.classList.length < 2 && display.classList.length < 1) {
-            num2 = display.textContent;
-            const result = operate(operator, num1, num2);
-            console.log(`${num1} ${operator} ${num2} = ${result}`);
-            display.textContent = roundResult(result) * 1;
-        };
-        //if (decimalPoint.classList.length > 0) {
-          //  decimalPoint.classList.toggle('used');
-       // }
-        unselectButtons(buttons);
-        operator = operation.id;
-        operation.classList.toggle('selected');
-        display.classList.toggle('operation-selected');
-        num1 = display.textContent;
-    });
+    operation.addEventListener('click', enterOperation); 
 });
 
-// Enter operation if typed on keyboard
 window.addEventListener('keydown', (function(e) {
     if (e.key !== '/' && e.key !== '*' && e.key !== '-' && e.key !== '+') return;
-    const operation = e.key;
-    enterOperation(operation);
-    //
-
-    if (operator !== '' && equals.classList.length < 2 && display.classList.length < 1) {
-        num2 = display.textContent;
-        const result = operate(operator, num1, num2);
-        console.log(`${num1} ${operator} ${num2} = ${result}`);
-        display.textContent = roundResult(result) * 1;
-    };
-    if (decimalPoint.classList.length > 0) {
-        decimalPoint.classList.toggle('used');
-    }
-    unselectButtons(buttons);
-    assignOperator(e);
-    display.classList.toggle('operation-selected');
-    num1 = display.textContent;
+    enterOperation(e);
 }));
 
-function enterOperation(operation) {
-    if (operation.type === 'click') {
-        operation = operation.scrElement.textContent;
-        console.log(operation);
-    };
+function enterOperation(operation) {  
     if (operator !== '' && equals.classList.length < 2 && display.classList.length < 1) {
         num2 = display.textContent;
         const result = operate(operator, num1, num2);
@@ -95,27 +59,29 @@ function enterOperation(operation) {
     };
     if (decimalPoint.classList.length > 0) {
         decimalPoint.classList.toggle('used');
-    }
+    };
     unselectButtons(buttons);
+    if (operation.type === 'click') {
+        operator = operation.target.id;
+        operation.target.classList.toggle('selected');
+    } else if (operation.type === 'keydown') {
+        assignOperator(operation);
+    };
     display.classList.toggle('operation-selected');
+    num1 = display.textContent;
+};
 
-   
-
-   num1 = display.textContent;
-
-}
-
-function assignOperator(e) {
-    if (e.key === '/') {
+function assignOperator(operation) {
+    if (operation.key === '/') {
         operator = 'division';
         operations[0].classList.toggle('selected');
-    } else if (e.key === '*') {
+    } else if (operation.key === '*') {
         operator = 'multiplication';
         operations[1].classList.toggle('selected');
-    } else if (e.key === '-') {
+    } else if (operation.key === '-') {
         operator = 'subtraction';
         operations[2].classList.toggle('selected');
-    } else if (e.key === '+') {
+    } else if (operation.key === '+') {
         operator = 'addition';
         operations[3].classList.toggle('selected');
     };
@@ -264,6 +230,7 @@ function divide(a, b) {
 
 function clearCalc() {
     //Erase all data
+    
     unselectButtons(buttons);
     if (decimalPoint.classList.length > 0) {
         decimalPoint.classList.toggle('used');
