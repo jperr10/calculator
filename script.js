@@ -25,14 +25,16 @@ function enterDigit(digit) {
     if (digit.type === 'click') {
         digit = digit.srcElement.textContent;
     };
-    if (equals.classList.length > 1) {
+    if (equals.classList.length > 1 || decimalPoint.classList.length > 0) {
         operator = '';
     };
     if (display.textContent === '0') {
         display.textContent = '';
+        unselectDecimal();
     } else (buttons.forEach((button) => {
         if (button.classList.length > 1) {
             display.textContent = '';
+            unselectDecimal();
         };
     }));
     if (checkNumTooLong(display.textContent)) { 
@@ -57,9 +59,7 @@ function enterOperation(operation) {
         console.log(`${num1} ${operator} ${num2} = ${result}`);
         display.textContent = roundResult(result) * 1;
     };
-    if (decimalPoint.classList.length > 0) {
-        decimalPoint.classList.toggle('used');
-    };
+    unselectDecimal();
     unselectButtons(buttons);
     if (operation.type === 'click') {
         operator = operation.target.id;
@@ -92,9 +92,6 @@ function unselectButtons(buttons) {
     if (display.classList.length > 0) {
         display.classList.toggle('operation-selected');
     };
-    if (decimalPoint.classList.length > 0) {
-        decimalPoint.classList.toggle('used');
-    };
     buttons.forEach((button) => {
         if (button.classList.length > 1) {
             button.classList.toggle('selected');
@@ -102,41 +99,19 @@ function unselectButtons(buttons) {
     });
 };
 
-
-equals.addEventListener('click', () => {
-    
-    if (equals.classList.length > 1) {
-        equals.classList.toggle('selected');
-        num1 = display.textContent;  
-    } else if (operator === '') {
-        // n = n+0
-        operator = 'addition'
-        num1 = display.textContent;
-        num2 = 0;
-    } else if (num2 === '') {
-        num2 = display.textContent;
-    } else {
-        num2 = display.textContent;
-    };
-    const result = operate(operator, num1, num2);
-    console.log(`${num1} ${operator} ${num2} = ${result}`);
-    display.textContent = roundResult(result) * 1;
-    equals.classList.toggle('selected');
-})
-
-// Enter = if typed on keyboard
+equals.addEventListener('click', enterEquals); 
 window.addEventListener('keydown', function(e) {
     if (e.key !== '=' && e.key !== 'Enter') return;
+    e.preventDefault();
+    enterEquals();
+});
 
-console.log(e.key);
-e.preventDefault();
-
+function enterEquals() {
     if (equals.classList.length > 1) {
         equals.classList.toggle('selected');
         num1 = display.textContent;  
     } else if (operator === '') {
         console.log(operator);
-        // n = n+0
         operator = 'addition'
         num1 = display.textContent;
         num2 = 0;
@@ -150,7 +125,7 @@ e.preventDefault();
     display.textContent = roundResult(result) * 1;
     console.log(display.textContent);
     equals.classList.toggle('selected');
-});
+};
 
 function operate(operator, num1, num2) {
     console.log(`${num1} ${operator} ${num2}  `)
@@ -178,13 +153,10 @@ function roundResult(result) {
     return result;
 };
 
-
 decimalPoint.addEventListener('click', typeDecimal);
+
 window.addEventListener('keydown', function(e) {
     if (e.key !== '.') return;
-
-    console.log(e.key);
-
     typeDecimal();
 });
 
@@ -192,6 +164,7 @@ function typeDecimal() {
     buttons.forEach((button) => {
         //check if any operators or = is selected
         if (button.classList.length > 1) {
+            unselectDecimal();
             console.log(display.textContent);
             display.textContent = '0';
             unselectButtons(buttons);
@@ -203,9 +176,13 @@ function typeDecimal() {
     };
 };
 
+function unselectDecimal() {
+    if (decimalPoint.classList.length > 0) {
+        decimalPoint.classList.toggle('used');
+    };
+};
 
 clear.addEventListener('click', clearCalc);
-
 
 function add(a, b) {
     return Number(a) + Number(b);
@@ -227,19 +204,13 @@ function divide(a, b) {
     };
 };
 
-
 function clearCalc() {
-    //Erase all data
-    
     unselectButtons(buttons);
-    if (decimalPoint.classList.length > 0) {
-        decimalPoint.classList.toggle('used');
-    };
+    unselectDecimal();
     display.textContent = '0';
     num1 = '';
     num2 = '';
     operator = ''
-    //clear.classList.toggle('selected');
 };
 
 function changeDisplaySign() {
@@ -249,4 +220,3 @@ function changeDisplaySign() {
 function makeDisplayPercentage() {
     display.textContent *= .01;
 };
-
