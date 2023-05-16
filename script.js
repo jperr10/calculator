@@ -22,6 +22,9 @@ window.addEventListener('keydown', (function(e) {
 }));
 
 function enterDigit(digit) {
+    if (clear.textContent === 'AC') {
+        clear.textContent = 'C';
+    };
     if (digit.type === 'click') {
         digit = digit.srcElement.textContent;
     };
@@ -160,6 +163,23 @@ window.addEventListener('keydown', function(e) {
     typeDecimal();
 });
 
+window.addEventListener('keydown',function(e) {
+    if (e.key !== 'Backspace') return;
+    backspace();
+});
+
+function backspace() {
+    if (display.textContent === '0' || equals.classList.length > 1) return;
+    if (display.textContent.length < 2) {
+        display.textContent = '0';
+    } else {
+        if (display.textContent.split('')[display.textContent.length-1] === '.') {
+            decimalPoint.classList.toggle('used');
+        };
+        display.textContent = display.textContent.slice(0,-1);
+    };
+};
+
 function typeDecimal() {
     buttons.forEach((button) => {
         //check if any operators or = is selected
@@ -182,7 +202,6 @@ function unselectDecimal() {
     };
 };
 
-clear.addEventListener('click', clearCalc);
 
 function add(a, b) {
     return Number(a) + Number(b);
@@ -204,10 +223,16 @@ function divide(a, b) {
     };
 };
 
+clear.addEventListener('click', clearCalc);
+
 function clearCalc() {
-    unselectButtons(buttons);
     unselectDecimal();
     display.textContent = '0';
+    if (clear.textContent === 'C') {
+        clear.textContent = 'AC';
+        return;
+    };
+    unselectButtons(buttons);
     num1 = '';
     num2 = '';
     operator = ''
